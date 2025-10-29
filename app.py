@@ -110,6 +110,20 @@ def add_dispositivo():
     devices[device_id] = device
     return jsonify(device), 201
 
+@app.route('/dispositivos/<device_id>', methods=['PUT'])
+def update_dispositivo(device_id):
+    if device_id not in devices:
+        return jsonify({"error": "Dispositivo no encontrado"}), 404
+    if not request.is_json:
+        return jsonify({"error": "Se requiere JSON"}), 400
+    data = request.get_json()
+    # Actualizar solo los campos proporcionados
+    allowed = {'nombre', 'descripcion', 'ip', 'mac', 'ubicacion', 'tipo', 'otros'}
+    for key, value in data.items():
+        if key in allowed:
+            devices[device_id][key] = value
+    return jsonify(devices[device_id])
+
 
 if __name__ == '__main__':
     app.run(debug=True)
