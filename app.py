@@ -87,6 +87,28 @@ def dispositivos_html():
     return render_template_string(template, dispositivos=list(devices.values()))
 
 
+@app.route('/dispositivos', methods=['POST'])
+def add_dispositivo():
+    if not request.is_json:
+        return jsonify({"error": "Se requiere JSON"}), 400
+    data = request.get_json()
+    if 'id' not in data:
+        return jsonify({"error": "Falta campo 'id'"}), 400
+    device_id = data['id']
+    if device_id in devices:
+        return jsonify({"error": "Dispositivo con ese id ya existe"}), 400
+    device = {
+        'id': device_id,
+        'nombre': data.get('nombre', ''),
+        'descripcion': data.get('descripcion', ''),
+        'ip': data.get('ip', ''),
+        'mac': data.get('mac', ''),
+        'ubicacion': data.get('ubicacion', ''),
+        'tipo': data.get('tipo', ''),
+        'otros': data.get('otros', '')
+    }
+    devices[device_id] = device
+    return jsonify(device), 201
 
 
 if __name__ == '__main__':
