@@ -58,9 +58,36 @@ from flask import Flask, jsonify, render_template_string, request, redirect, url
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
-def test():
-   return "Hola mundo" 
-   
+
+@app.route('/dispositivos_html', methods=['GET'])
+def dispositivos_html():
+    template = '''
+    <!doctype html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8">
+      <title>Dispositivos</title>
+    </head>
+    <body>
+      <h1>Listado de dispositivos</h1>
+      {% for d in dispositivos %}
+        <div class="dispositivo">
+          <h2>{{ d.nombre }} ({{ d.id }})</h2>
+          <p><strong>Descripción:</strong> {{ d.descripcion }}</p>
+          <p><strong>IP:</strong> {{ d.ip }} &nbsp; <strong>MAC:</strong> {{ d.mac }}</p>
+          <p><strong>Ubicación:</strong> {{ d.ubicacion }} &nbsp; <strong>Tipo:</strong> {{ d.tipo }}</p>
+          <p><strong>Otros:</strong> {{ d.otros }}</p>
+        </div>
+      {% else %}
+        <p>No hay dispositivos registrados.</p>
+      {% endfor %}
+    </body>
+    </html>
+    '''
+    return render_template_string(template, dispositivos=list(devices.values()))
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
